@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Counting Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FFE5B4, #FFCCCB);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .score-board {
+            background: #E3F2FD;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1976D2;
+        }
+
+        .problem-area {
+            background: #F0F8FF;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 3px solid #87CEEB;
+        }
+
+        .coins-display {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .coin {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .coin:hover {
+            transform: scale(1.1);
+        }
+
+        .coin.penny {
+            background: linear-gradient(45deg, #CD7F32, #8B4513);
+            border: 3px solid #654321;
+        }
+
+        .coin.nickel {
+            background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+            border: 3px solid #808080;
+        }
+
+        .coin.dime {
+            background: linear-gradient(45deg, #E5E5E5, #D3D3D3);
+            border: 3px solid #B0B0B0;
+        }
+
+        .coin.quarter {
+            background: linear-gradient(45deg, #F5F5DC, #E0E0E0);
+            border: 3px solid #C0C0C0;
+        }
+
+        .answer-section {
+            margin: 30px 0;
+        }
+
+        .answer-input {
+            font-size: 2em;
+            padding: 15px;
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            text-align: center;
+            width: 200px;
+            margin: 0 10px;
+        }
+
+        .btn {
+            font-size: 1.2em;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .feedback {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 20px;
+        }
+
+        .correct {
+            background: #D4EDDA;
+            color: #155724;
+            border: 2px solid #C3E6CB;
+        }
+
+        .incorrect {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 2px solid #F5C6CB;
+        }
+
+        .coin-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            background: #FFFACD;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .coin-reference {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .celebration {
+            font-size: 3em;
+            animation: bounce 0.6s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            80% { transform: translateY(-15px); }
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🪙 Money Counting Game 🪙</h1>
+        
+        <div class="score-board">
+            <div class="score-item">Score: <span id="score">0</span></div>
+            <div class="score-item">Question: <span id="questionNum">1</span> of 10</div>
+            <div class="score-item">Streak: <span id="streak">0</span></div>
+        </div>
+
+        <div class="coin-info">
+            <div class="coin-reference">
+                <div class="coin penny" style="width: 50px; height: 50px; font-size: 12px;">1¢</div>
+                <div>Penny = 1¢</div>
+            </div>
+            <div class="coin-reference">
+                <div class="coin nickel" style="width: 50px; height: 50px; font-size: 12px;">5¢</div>
+                <div>Nickel = 5¢</div>
+            </div>
+            <div class="coin-reference">
+                <div class="coin dime" style="width: 50px; height: 50px; font-size: 12px;">10¢</div>
+                <div>Dime = 10¢</div>
+            </div>
+            <div class="coin-reference">
+                <div class="coin quarter" style="width: 50px; height: 50px; font-size: 12px;">25¢</div>
+                <div>Quarter = 25¢</div>
+            </div>
+        </div>
+
+        <div class="problem-area">
+            <div class="question-text" id="questionText">Count the coins and enter the total amount!</div>
+            <div class="coins-display" id="coinsDisplay"></div>
+            
+            <div class="answer-section">
+                <input type="number" class="answer-input" id="answerInput" placeholder="0" min="0" max="999">
+                <span style="font-size: 1.5em;">¢</span>
+                <br><br>
+                <button class="btn btn-primary" onclick="checkAnswer()">Check Answer</button>
+                <button class="btn btn-secondary" onclick="nextQuestion()">Next Question</button>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div style="margin-top: 30px;">
+            <button class="btn btn-secondary" onclick="resetGame()">Start New Game</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let score = 0;
+        let streak = 0;
+        let correctAnswer = 0;
+        let gameQuestions = [];
+
+        const coinTypes = [
+            { name: 'penny', value: 1, class: 'penny', display: '1¢' },
+            { name: 'nickel', value: 5, class: 'nickel', display: '5¢' },
+            { name: 'dime', value: 10, class: 'dime', display: '10¢' },
+            { name: 'quarter', value: 25, class: 'quarter', display: '25¢' }
+        ];
+
+        function generateQuestion() {
+            const coins = [];
+            const numCoins = Math.floor(Math.random() * 8) + 3; // 3-10 coins
+            
+            for (let i = 0; i < numCoins; i++) {
+                const randomCoin = coinTypes[Math.floor(Math.random() * coinTypes.length)];
+                coins.push(randomCoin);
+            }
+            
+            // Sort coins by value (largest to smallest) for easier counting
+            coins.sort((a, b) => b.value - a.value);
+            
+            correctAnswer = coins.reduce((total, coin) => total + coin.value, 0);
+            
+            return coins;
+        }
+
+        function displayCoins(coins) {
+            const coinsDisplay = document.getElementById('coinsDisplay');
+            coinsDisplay.innerHTML = '';
+            
+            coins.forEach((coin, index) => {
+                const coinElement = document.createElement('div');
+                coinElement.className = `coin ${coin.class}`;
+                coinElement.textContent = coin.display;
+                coinElement.onclick = () => showCoinValue(coin.value);
+                coinsDisplay.appendChild(coinElement);
+            });
+        }
+
+        function showCoinValue(value) {
+            // Temporary visual feedback when coin is clicked
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = `This coin is worth ${value}¢!`;
+            feedback.className = 'feedback';
+            feedback.style.background = '#E1F5FE';
+            feedback.style.color = '#0277BD';
+            feedback.style.border = '2px solid #81D4FA';
+            
+            setTimeout(() => {
+                if (feedback.textContent === `This coin is worth ${value}¢!`) {
+                    feedback.textContent = '';
+                    feedback.className = 'feedback';
+                }
+            }, 2000);
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const feedback = document.getElementById('feedback');
+            
+            if (isNaN(userAnswer)) {
+                feedback.textContent = 'Please enter a number!';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+            
+            if (userAnswer === correctAnswer) {
+                score += 10;
+                streak++;
+                feedback.innerHTML = `<span class="celebration">🎉 Correct! 🎉</span><br>Great job counting!`;
+                feedback.className = 'feedback correct';
+                
+                // Bonus points for streak
+                if (streak >= 3) {
+                    score += 5;
+                    feedback.innerHTML += `<br>Streak bonus: +5 points!`;
+                }
+            } else {
+                streak = 0;
+                feedback.innerHTML = `Not quite right. The correct answer is ${correctAnswer}¢.<br>Try counting each coin carefully!`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            updateScoreBoard();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion >= 10) {
+                endGame();
+                return;
+            }
+            
+            currentQuestion++;
+            const coins = generateQuestion();
+            displayCoins(coins);
+            
+            document.getElementById('answerInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            updateScoreBoard();
+        }
+
+        function updateScoreBoard() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('questionNum').textContent = currentQuestion;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function endGame() {
+            const feedback = document.getElementById('feedback');
+            let message = `🎊 Game Complete! 🎊<br>Final Score: ${score} points<br>`;
+            
+            if (score >= 80) {
+                message += "Outstanding! You're a money counting expert! 🌟";
+            } else if (score >= 60) {
+                message += "Great job! You're getting really good at this! 👏";
+            } else if (score >= 40) {
+                message += "Good effort! Keep practicing and you'll improve! 💪";
+            } else {
+                message += "Nice try! Remember to count each coin carefully! 🤗";
+            }
+            
+            feedback.innerHTML = message;
+            feedback.className = 'feedback correct';
+            
+            document.getElementById('questionText').textContent = 'Game Over! Click "Start New Game" to play again!';
+            document.getElementById('coinsDisplay').innerHTML = '';
+        }
+
+        function resetGame() {
+            currentQuestion = 1;
+            score = 0;
+            streak = 0;
+            
+            const coins = generateQuestion();
+            displayCoins(coins);
+            
+            document.getElementById('answerInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('questionText').textContent = 'Count the coins and enter the total amount!';
+            
+            updateScoreBoard();
+        }
+
+        // Allow Enter key to submit answer
+        document.getElementById('answerInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Initialize the game
+        resetGame();
+    </script>
+</body>
+</html>
