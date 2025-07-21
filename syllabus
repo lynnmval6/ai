@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .syllabus-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .syllabus-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        .welcome-message {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Course</h1>
+        <p>This is your course homepage. Click the button below to view the course syllabus and get started with your learning journey.</p>
+        
+        <div class="welcome-message" id="welcomeMsg" style="display: none;">
+            <p><strong>Great to see you here!</strong> Ready to explore the syllabus?</p>
+        </div>
+        
+        <a href="syllabus.html" class="syllabus-btn" id="syllabusLink">
+            View Syllabus
+        </a>
+    </div>
+
+    <script>
+        // Show welcome message after page loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('welcomeMsg').style.display = 'block';
+            }, 1000);
+        });
+
+        // Add click event to syllabus button
+        document.getElementById('syllabusLink').addEventListener('click', function(e) {
+            // Check if syllabus.html exists (basic check)
+            const link = this;
+            
+            // Add a loading effect
+            link.innerHTML = 'Loading...';
+            
+            setTimeout(function() {
+                // Reset button text if still on page
+                if (document.getElementById('syllabusLink')) {
+                    link.innerHTML = 'View Syllabus';
+                }
+            }, 2000);
+        });
+
+        // Add some interactivity to the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            
+            // Add a subtle animation when page loads
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(function() {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Add current date and time display
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString();
+            const timeStr = now.toLocaleTimeString();
+            
+            // You can uncomment the next lines if you want to show date/time
+            // console.log(`Current date: ${dateStr}, Time: ${timeStr}`);
+        }
+
+        // Update time every minute
+        setInterval(updateDateTime, 60000);
+        updateDateTime(); // Initial call
+    </script>
+</body>
+</html>
